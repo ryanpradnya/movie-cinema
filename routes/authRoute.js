@@ -10,7 +10,7 @@ router.post('/signup', [
     body('email')
         .isEmail()
         .withMessage('Please enter a valid email'),
-    body('passoword')
+    body('password')
         .trim()
         .isLength({ min: 6 })
         .withMessage('Password length min 6 characters.'),

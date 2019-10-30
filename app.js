@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const adminAccount = require('./util/adminAccount');
+
 const authRoute = require('./routes/authRoute');
 // const userRoute = require('./routes/userRoute');
 // const adminRoute = require('./routes/adminRoute');
@@ -20,6 +22,8 @@ app.use((req, res, next) => {
     next();
 });
 
+// app.use(adminAccount.check);
+
 app.use('/api/auth/', authRoute);
 // app.use('/api/user/', userRoute);
 // app.use('/api/admin/', adminRoute);
@@ -28,7 +32,8 @@ app.use((error, req, res, next) => {
     console.log(error);
     const status = error.statusCode || 500;
     const message = error.message;
-    res.status(status).json({ message: message });
+    const data = error.data;
+    res.status(status).json({ message: message, data: data });
 });
 
 mongoose
@@ -38,7 +43,7 @@ mongoose
     .then(result => {
         console.log('Connected');
         // console.log('Date:', Date.now());
-        app.listen(8089);
+        app.listen(8089, adminAccount.createAdminAccount);
     })
     .catch(err => {
         console.log(err);

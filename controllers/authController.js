@@ -7,20 +7,20 @@ const config = require('../util/config');
 
 exports.signup = async (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error('Signup failed');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-    }
-    const email = req.body.email;
-    const password = req.body.password;
-    const mobilePhone = req.body.mobilePhone;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const isAdmin = false;
 
     try {
+        if (!errors.isEmpty()) {
+            const error = new Error('Signup failed');
+            error.statusCode = 422;
+            error.data = errors.array();
+            throw error;
+        }
+        const email = req.body.email;
+        const password = req.body.password;
+        const mobilePhone = req.body.mobilePhone;
+        const firstName = req.body.firstName;
+        const lastName = req.body.lastName;
+        const isAdmin = false;
         const hashedPw = await bcrypt.hashSync(password, 12);
 
         const user = new User({
@@ -44,18 +44,19 @@ exports.signup = async (req, res, next) => {
 
 exports.signin = async (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error('Signin failed');
-        error.statusCode = 422;
-        error.data = errors.array();
-        throw error;
-    }
-
-    const email = req.body.email;
-    const password = req.body.email;
 
     try {
-        const user = await User.findOne({ email: email });
+        if (!errors.isEmpty()) {
+            const error = new Error('Signin failed');
+            error.statusCode = 422;
+            error.data = errors.array();
+            throw error;
+        }
+
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const user = await User.findOne({ email: email, isAdmin: false });
         if (!user) {
             const error = new Error('Email not found');
             error.statusCode = 401;
