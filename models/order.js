@@ -3,21 +3,24 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
     {
-        seller: {
+        userId: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
         },
-        movie: {
+        userName: String,
+        movieId: {
             type: Schema.Types.ObjectId,
             ref: 'Movie',
             required: true
         },
-        room: {
+        movieTitle: String,
+        roomId: {
             type: Schema.Types.ObjectId,
             ref: 'Room',
-            required: true
+            required: false
         },
+        room: String,
         validTime: String,
         isPaid: Boolean
     },

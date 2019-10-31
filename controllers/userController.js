@@ -38,24 +38,6 @@ exports.movieList = async (req, res, next) => {
     }
 };
 
-exports.movieDetail = async (req, res, next) => {
-    const errors = validationResult(req);
-
-    try {
-        if (!errors.isEmpty()) {
-            const error = new Error('Validation failed');
-            error.statusCode = 422;
-            throw error
-        }
-
-    } catch (err) {
-        if (!err.statusCode) {
-            err.statusCode = 500
-        }
-        next(err);
-    }
-};
-
 exports.addOrder = async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -65,6 +47,25 @@ exports.addOrder = async (req, res, next) => {
             error.statusCode = 422;
             throw error
         }
+
+        const userId = req.userId
+        const movieId = req.params['movieId'];
+        const user = await User.findById(userId);
+        const userName = user.firstName + user.lastName
+        const movie = await Movie.findById(movieId);
+        const movieTitle = movie.title;
+        const order = new Order({
+            userId: userId,
+            userName: userName,
+            movieId: movieId,
+            movieTitle: movieTitle,
+            isPaid: false
+        });
+        const orderResult = await order.save();
+        res.status(201).json({
+            message: 'Movie ordered successfully',
+            order: orderResult
+        });
 
     } catch (err) {
         if (!err.statusCode) {

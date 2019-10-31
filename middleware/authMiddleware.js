@@ -23,7 +23,7 @@ exports.checkExistingEmail = async (req, res, next) => {
 };
 
 exports.veryfiToken = (req, res, next) => {
-    let authHeader = req.get('Autorization');
+    let authHeader = req.get('Authorization');
 
     let decodedToken;
 
@@ -44,6 +44,6 @@ exports.veryfiToken = (req, res, next) => {
         error.statusCode = 401;
         throw error;
     }
-    req.userId = decodedToken._id;
+    req.userId = decodedToken.userId;
     next();
 };
