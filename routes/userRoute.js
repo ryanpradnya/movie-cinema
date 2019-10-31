@@ -1,10 +1,20 @@
 const express = require('express');
 const { body } = require('express-validator/check');
 
-const authController = require('../controllers/authController');
+const userController = require('../controllers/userController');
 
-const router = exports.Router();
+const router = express.Router();
 
-router.put('/signup', authController)
+router.get('/movie-list', userController.movieList);
+
+router.get('/movie-detail', userController.movieDetail);
+
+router.post('/add-order', userController.addOrder);
+
+router.delete('/delete-order', userController.deleteOrder);
+
+router.post('/paid-order', userController.paidOrder);
+
+router.put('/update-profile', userController.updateProfile);
 
 module.exports = router;

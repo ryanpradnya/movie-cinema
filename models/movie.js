@@ -7,13 +7,14 @@ const movieSchema = new Schema({
         required: true
     },
     time: {
-        type: Number,
-        required: true
+        type: Date,
+        required: false
     },
     price: {
         type: Number,
         required: true
-    }
+    },
+    description: String
 
 })
 

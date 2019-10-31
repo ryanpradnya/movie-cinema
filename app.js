@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 const adminAccount = require('./util/adminAccount');
 
 const authRoute = require('./routes/authRoute');
-// const userRoute = require('./routes/userRoute');
-// const adminRoute = require('./routes/adminRoute');
+const userRoute = require('./routes/userRoute');
+const adminRoute = require('./routes/adminRoute');
 
 const app = express();
 
@@ -22,11 +22,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use(adminAccount.check);
-
 app.use('/api/auth/', authRoute);
-// app.use('/api/user/', userRoute);
-// app.use('/api/admin/', adminRoute);
+app.use('/api/user/', userRoute);
+app.use('/api/admin/', adminRoute);
 
 app.use((error, req, res, next) => {
     console.log(error);
