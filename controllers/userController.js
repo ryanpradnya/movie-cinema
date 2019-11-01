@@ -38,6 +38,37 @@ exports.movieList = async (req, res, next) => {
     }
 };
 
+exports.getOrder = async (req, res, next) => {
+    const errors = validationResult(req);
+
+    try {
+        if (!errors.isEmpty()) {
+            const error = new Error('Validation failed');
+            error.statusCode = 422;
+            throw error
+        }
+
+        const userId = req.userId
+        const order = await Order.find({ userId: userId, isPaid: false });
+
+        if (!order) {
+            const error = new Error('Order list not found');
+            error.statusCode = 404;
+            throw error;
+        }
+        res.status(200).json({
+            message: 'Fetch order list successfully',
+            orderList: order
+        })
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500
+        }
+        next(err);
+    }
+};
+
 exports.addOrder = async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -77,6 +108,7 @@ exports.addOrder = async (req, res, next) => {
 
 exports.deleteOrder = async (req, res, next) => {
     const errors = validationResult(req);
+    const orderId = req.params['orderId'];
 
     try {
         if (!errors.isEmpty()) {
@@ -84,6 +116,12 @@ exports.deleteOrder = async (req, res, next) => {
             error.statusCode = 422;
             throw error
         }
+        const order = await Order.findById(orderId);
+        await Order.findByIdAndDelete(orderId);
+        res.status(200).json({
+            message: 'Delete order successfully',
+            orderDeleted: order
+        })
 
     } catch (err) {
         if (!err.statusCode) {
@@ -95,6 +133,7 @@ exports.deleteOrder = async (req, res, next) => {
 
 exports.paidOrder = async (req, res, next) => {
     const errors = validationResult(req);
+    const orderId = req.params['orderId'];
 
     try {
         if (!errors.isEmpty()) {
@@ -102,6 +141,13 @@ exports.paidOrder = async (req, res, next) => {
             error.statusCode = 422;
             throw error
         }
+        const order = await Order.findById(orderId);
+        order.isPaid = true
+        const result = await order.save();
+        res.status(200).json({
+            message: 'Paid successfully',
+            order: result
+        })
 
     } catch (err) {
         if (!err.statusCode) {
