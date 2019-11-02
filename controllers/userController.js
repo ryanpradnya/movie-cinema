@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator/check');
-const bcrypt = require('body-parser');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
@@ -161,6 +161,7 @@ exports.paidOrder = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
     const errors = validationResult(req);
 
+
     try {
         if (!errors.isEmpty()) {
             const error = new Error('Validation failed');
@@ -168,7 +169,25 @@ exports.updateProfile = async (req, res, next) => {
             error.data = errors.array()
             throw error
         }
+        const newEmail = req.body.email;
+        const newPassword = req.body.password;
+        const newMobilePhone = req.body.mobilePhone;
+        const newFirstName = req.body.firstName;
+        const newLastName = req.body.lastName;
+        const hashedPw = await bcrypt.hashSync(newPassword, 12);
 
+        const updatedUser = await User.findByIdAndUpdate(req.userId, {
+            email: newEmail,
+            password: hashedPw,
+            mobilePhone: newMobilePhone,
+            firstName: newFirstName,
+            lastName: newLastName
+        }, { new: true });
+
+        res.status(200).json({
+            message: 'User updated!',
+            user: updatedUser
+        })
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500

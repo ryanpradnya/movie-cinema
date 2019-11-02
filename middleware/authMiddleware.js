@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { body } = require('express-validator/check');
 
 const config = require('../util/config');
 const User = require('../models/user');
@@ -46,4 +47,8 @@ exports.veryfiToken = (req, res, next) => {
     }
     req.userId = decodedToken.userId;
     next();
+};
+
+exports.updateProfileValidation = () => {
+
 };
