@@ -170,15 +170,20 @@ exports.updateProfile = async (req, res, next) => {
             throw error
         }
         const newEmail = req.body.email;
-        const newPassword = req.body.password;
         const newMobilePhone = req.body.mobilePhone;
         const newFirstName = req.body.firstName;
         const newLastName = req.body.lastName;
-        const hashedPw = await bcrypt.hashSync(newPassword, 12);
+        let newPassword;
+        if (req.isNewPassword) {
+            const password = req.body.password;
+            newPassword = await bcrypt.hashSync(password, 12);
+        } else {
+            newPassword = req.body.password;
+        }
 
         const updatedUser = await User.findByIdAndUpdate(req.userId, {
             email: newEmail,
-            password: hashedPw,
+            password: newPassword,
             mobilePhone: newMobilePhone,
             firstName: newFirstName,
             lastName: newLastName

@@ -17,18 +17,15 @@ router.delete('/delete-order/:movieId', authMiddleware.veryfiToken, userControll
 router.put('/pay-order/:orderId', authMiddleware.veryfiToken, userController.paidOrder);
 
 router.put('/update-profile', [
+    authMiddleware.veryfiToken,
+    authMiddleware.updateProfileValidation,
     body('email')
         .isEmail()
         .withMessage('Please enter a valid email'),
-    body('password')
-        .trim()
-        .isLength({ min: 6 })
-        .withMessage('Password length min 6 characters.'),
     body('mobilePhone')
         .trim()
         .isLength({ min: 11, max: 13 })
-        .withMessage('Mobile phone number min 11 and max 13 characters.'),
-    authMiddleware.veryfiToken
+        .withMessage('Mobile phone number min 11 and max 13 characters.')
 ],
     userController.updateProfile);
 
