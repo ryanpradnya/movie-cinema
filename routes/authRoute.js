@@ -30,4 +30,13 @@ router.post('/signin', [
         .not().isEmpty().withMessage('Password is required.')],
     authController.signin);
 
+router.post('/admin-signin', [
+    body('email')
+        .isEmail()
+        .withMessage('Please enter a valid email.'),
+    body('password')
+        .trim()
+        .not().isEmpty().withMessage('Password is required.')],
+    authController.adminSignin);
+
 module.exports = router;

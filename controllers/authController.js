@@ -84,6 +84,48 @@ exports.signin = async (req, res, next) => {
         }
         next(err);
     }
+};
 
+exports.adminSignin = async (req, res, next) => {
+    const errors = validationResult(req);
 
+    try {
+        if (!errors.isEmpty()) {
+            const error = new Error('Signin failed');
+            error.statusCode = 422;
+            error.data = errors.array();
+            throw error;
+        }
+
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const user = await User.findOne({ email: email, isAdmin: true });
+        if (!user) {
+            const error = new Error('Email not found');
+            error.statusCode = 401;
+            throw error;
+        }
+        const passrowdIsValid = await bcrypt.compareSync(password, user.password);
+        if (!passrowdIsValid) {
+            const error = new Error('Wrong passord!');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const token = jwt.sign(
+            {
+                email: user.email,
+                userId: user._id.toString()
+            }, config.jwtSecret,
+            { expiresIn: 86400 }
+        );
+        res.status(200).json({ message: 'Signin success', token: token, user: user })
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 };
